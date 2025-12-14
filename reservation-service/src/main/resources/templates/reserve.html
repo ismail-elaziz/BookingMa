@@ -1,0 +1,1173 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Book Your Stay - Hotel Reservation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #003580;
+      --primary-dark: #00224f;
+      --accent: #0071c2;
+      --success: #008009;
+      --warning: #febb02;
+      --text-dark: #1a1a1a;
+      --text-muted: #6b7280;
+      --bg-light: #f5f7fa;
+      --white: #ffffff;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
+      --radius: 12px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text-dark);
+      background: var(--bg-light);
+      line-height: 1.6;
+    }
+    
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      padding: 16px 0;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    
+    .nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    
+    .nav a {
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+    
+    .nav a:hover {
+      opacity: 0.8;
+    }
+    
+    /* Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    
+    .page-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-dark);
+    }
+    
+    .page-subtitle {
+      color: var(--text-muted);
+      font-size: 16px;
+      margin-bottom: 32px;
+    }
+    
+    /* Hotel Grid */
+    .hotel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    
+    .hotel-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: 3px solid transparent;
+    }
+    
+    .hotel-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .hotel-card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px rgba(0,113,194,0.2);
+    }
+    
+    .hotel-image {
+      width: 100%;
+      height: 220px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      position: relative;
+    }
+    
+    .hotel-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--success);
+      color: var(--white);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    
+    .hotel-info {
+      padding: 20px;
+    }
+    
+    .hotel-name {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+    }
+    
+    .hotel-location {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .hotel-rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .rating-badge {
+      background: var(--primary);
+      color: var(--white);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    
+    .rating-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    
+    .hotel-price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .price-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    
+    .price-amount {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    /* Booking Form */
+    .booking-section {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: var(--text-dark);
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    
+    .form-field {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .form-field.full-width {
+      grid-column: 1 / -1;
+    }
+    
+    .form-field label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+    
+    .form-field input,
+    .form-field select {
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    
+    .form-field input:focus,
+    .form-field select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .btn {
+      padding: 14px 32px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, #005aa3 100%);
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(0,113,194,0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,113,194,0.4);
+    }
+    
+    .btn-secondary {
+      background: var(--white);
+      color: var(--text-dark);
+      border: 2px solid #e5e7eb;
+    }
+    
+    .btn-secondary:hover {
+      background: var(--bg-light);
+    }
+    
+    /* Payment Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .modal-content {
+      background: var(--white);
+      border-radius: 16px;
+      max-width: 1000px;
+      width: 95%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s ease;
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .modal-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      padding: 24px 32px;
+      border-radius: 16px 16px 0 0;
+    }
+    
+    .modal-header h3 {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    .modal-body {
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    
+    /* 3D Card */
+    .card-3d-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .card-3d {
+      perspective: 1000px;
+    }
+    
+    .card-inner {
+      width: 380px;
+      height: 240px;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+    
+    .card-inner.flipped {
+      transform: rotateY(180deg);
+    }
+    
+    .card-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      backface-visibility: hidden;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    }
+    
+    .card-front {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      padding: 28px;
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .card-chip {
+      width: 54px;
+      height: 42px;
+      background: linear-gradient(135deg, #d4af37, #f2d675);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    
+    .card-chip::before,
+    .card-chip::after {
+      content: '';
+      position: absolute;
+      background: rgba(0,0,0,0.1);
+    }
+    
+    .card-chip::before {
+      width: 40px;
+      height: 28px;
+      top: 7px;
+      left: 7px;
+      border-radius: 4px;
+    }
+    
+    .card-number {
+      font-size: 22px;
+      letter-spacing: 3px;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    
+    .card-holder,
+    .card-expiry {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .card-label {
+      font-size: 10px;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .card-value {
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    
+    .card-back {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      transform: rotateY(180deg);
+    }
+    
+    .magstripe {
+      height: 50px;
+      background: #000;
+      margin-top: 32px;
+    }
+    
+    .signature-panel {
+      background: #fff;
+      margin: 24px 28px;
+      padding: 12px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .signature-text {
+      font-size: 12px;
+      color: #999;
+      font-style: italic;
+    }
+    
+    .cvv-value {
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #000;
+    }
+    
+    /* Payment Form */
+    .payment-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .payment-field {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .payment-field label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+    
+    .payment-field input {
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    
+    .payment-field input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .payment-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    
+    .payment-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    
+    .payment-status {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+    }
+    
+    .payment-status.processing {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .payment-status.success {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    /* Responsive */
+    @media (max-width: 968px) {
+      .hotel-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-body {
+        grid-template-columns: 1fr;
+      }
+      
+      .card-3d-container {
+        order: -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">🏨 HotelBook</div>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/ui/reserve">Reserve</a>
+        <a href="/ui/history">My Bookings</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1 class="page-title">Choose Your Hotel</h1>
+    <p class="page-subtitle">Select from our collection of premium hotels</p>
+
+    <!-- Hotel Grid -->
+    <div class="hotel-grid" id="hotelGrid">
+      <div th:each="h : ${hotels}" class="hotel-card" th:data-id="${h.id}" onclick="selectHotel(this)">
+        <div class="hotel-image">
+          🏨
+          <span class="hotel-badge">Available</span>
+        </div>
+        <div class="hotel-info">
+          <h3 class="hotel-name" th:text="${h.name}">Hotel Name</h3>
+          <div class="hotel-location">
+            📍 <span th:text="${h.location}">Location</span>
+          </div>
+          <div class="hotel-rating">
+            <span class="rating-badge">8.5</span>
+            <span class="rating-text">Excellent · 250 reviews</span>
+          </div>
+          <div class="hotel-price">
+            <span class="price-label">Starting from</span>
+            <span class="price-amount">€120</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="booking-section">
+      <h2 class="section-title">Complete Your Reservation</h2>
+      
+      <form id="reserveForm" action="/ui/reserve" method="post">
+        <input type="hidden" id="hotelIdInput" name="hotelId" required />
+        
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Select Room</label>
+            <select id="roomSelect" name="roomId" required>
+              <option th:each="r : ${rooms}" th:value="${r.id}" 
+                      th:text="${r.roomNumber + ' — ' + r.capacity + ' guests — €' + r.price}">
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-field">
+            <label>Full Name</label>
+            <input type="text" name="customerName" required placeholder="John Doe" />
+          </div>
+          
+          <div class="form-field">
+            <label>Check-in Date</label>
+            <input type="date" name="checkin" required />
+          </div>
+          
+          <div class="form-field">
+            <label>Check-out Date</label>
+            <input type="date" name="checkout" required />
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Continue to Payment</button>
+          <a href="/" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div id="paymentModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>💳 Secure Payment</h3>
+      </div>
+      
+      <div class="modal-body">
+        <!-- 3D Card Preview -->
+        <div class="card-3d-container">
+          <div class="card-3d">
+            <div class="card-inner" id="cardInner">
+              <!-- Front -->
+              <div class="card-face card-front">
+                <div>
+                  <div class="card-chip"></div>
+                  <div class="card-number" id="displayCardNumber">•••• •••• •••• ••••</div>
+                </div>
+                <div class="card-footer">
+                  <div class="card-holder">
+                    <div class="card-label">Card Holder</div>
+                    <div class="card-value" id="displayCardHolder">YOUR NAME</div>
+                  </div>
+                  <div class="card-expiry">
+                    <div class="card-label">Expires</div>
+                    <div class="card-value" id="displayExpiry">MM/YY</div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Back -->
+              <div class="card-face card-back">
+                <div class="magstripe"></div>
+                <div class="signature-panel">
+                  <div class="signature-text">Authorized Signature</div>
+                  <div class="cvv-value" id="displayCvv">•••</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Payment Form -->
+        <div>
+          <form id="paymentForm" class="payment-form">
+            <div class="payment-field">
+              <label>Card Number</label>
+              <input id="cardNumber" type="text" maxlength="19" 
+                     placeholder="1234 5678 9012 3456" required />
+            </div>
+            
+            <div class="payment-field">
+              <label>Cardholder Name</label>
+              <input id="cardHolder" type="text" 
+                     placeholder="JOHN DOE" required />
+            </div>
+            
+            <div class="payment-row">
+              <div class="payment-field">
+                <label>Expiry Date</label>
+                <input id="expiry" type="text" maxlength="5" 
+                       placeholder="MM/YY" required />
+              </div>
+              
+              <div class="payment-field">
+                <label>CVV</label>
+                <input id="cvv" type="text" maxlength="4" 
+                       placeholder="123" required />
+              </div>
+            </div>
+            
+            <div class="payment-actions">
+              <button type="submit" class="btn btn-primary" id="processBtn">
+                Process Payment
+              </button>
+              <button type="button" class="btn btn-secondary" id="cancelBtn">
+                Cancel
+              </button>
+            </div>
+            
+            <div id="paymentStatus" class="payment-status" style="display:none;"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Hotel selection
+    const hotelGrid = document.getElementById('hotelGrid');
+    const roomSelect = document.getElementById('roomSelect');
+    const hotelIdInput = document.getElementById('hotelIdInput');
+
+    // Initialize first hotel
+    (function init() {
+      const firstCard = hotelGrid.querySelector('.hotel-card');
+      if (firstCard) selectCard(firstCard);
+    })();
+
+    function selectCard(card) {
+      hotelGrid.querySelectorAll('.hotel-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      const hid = card.getAttribute('data-id');
+      hotelIdInput.value = hid;
+      
+      fetch('/ui/rooms?hotelId=' + hid)
+        .then(r => r.json())
+        .then(list => {
+          roomSelect.innerHTML = '';
+          if (list.length === 0) {
+            const opt = document.createElement('option');
+            opt.textContent = 'No rooms available';
+            opt.disabled = true;
+            roomSelect.appendChild(opt);
+            return;
+          }
+          for (const r of list) {
+            const opt = document.createElement('option');
+            opt.value = r.id;
+            opt.textContent = r.roomNumber + ' — ' + r.capacity + ' guests — €' + r.price + 
+                             (r.available ? '' : ' (unavailable)');
+            if (!r.available) opt.disabled = true;
+            roomSelect.appendChild(opt);
+          }
+        })
+        .catch(err => console.error(err));
+    }
+
+    window.selectHotel = function(el) { selectCard(el); }
+
+    // Payment modal
+    const reserveForm = document.getElementById('reserveForm');
+    const paymentModal = document.getElementById('paymentModal');
+    const paymentForm = document.getElementById('paymentForm');
+    const processBtn = document.getElementById('processBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const paymentStatus = document.getElementById('paymentStatus');
+
+    let pendingReservation = null;
+
+    reserveForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const fd = new FormData(reserveForm);
+      pendingReservation = {};
+      for (const [k, v] of fd.entries()) { pendingReservation[k] = v; }
+      
+      paymentModal.classList.add('active');
+      paymentStatus.style.display = 'none';
+      
+      const cardHolderInput = document.getElementById('cardHolder');
+      const name = (pendingReservation.customerName || '').toUpperCase();
+      cardHolderInput.value = name;
+      document.getElementById('displayCardHolder').textContent = name || 'YOUR NAME';
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      paymentModal.classList.remove('active');
+    });
+
+    // Card preview
+    const cardNumber = document.getElementById('cardNumber');
+    const cardHolder = document.getElementById('cardHolder');
+    const expiry = document.getElementById('expiry');
+    const cvv = document.getElementById('cvv');
+    const displayCardNumber = document.getElementById('displayCardNumber');
+    const displayCardHolder = document.getElementById('displayCardHolder');
+    const displayExpiry = document.getElementById('displayExpiry');
+    const displayCvv = document.getElementById('displayCvv');
+    const cardInner = document.getElementById('cardInner');
+
+    cardNumber.addEventListener('input', function(e) {
+      let v = e.target.value.replace(/\s/g, '');
+      let fmt = v.match(/.{1,4}/g)?.join(' ') || v;
+      e.target.value = fmt;
+      displayCardNumber.textContent = fmt || '•••• •••• •••• ••••';
+    });
+
+    cardHolder.addEventListener('input', function(e) {
+      displayCardHolder.textContent = e.target.value.toUpperCase() || 'YOUR NAME';
+    });
+
+    expiry.addEventListener('input', function(e) {
+      let v = e.target.value.replace(/\D/g, '');
+      if (v.length >= 2) v = v.slice(0, 2) + '/' + v.slice(2, 4);
+      e.target.value = v;
+      displayExpiry.textContent = v || 'MM/YY';
+    });
+
+    cvv.addEventListener('focus', () => cardInner.classList.add('flipped'));
+    cvv.addEventListener('blur', () => cardInner.classList.remove('flipped'));
+    cvv.addEventListener('input', function(e) {
+      let v = e.target.value.replace(/\D/g, '');
+      displayCvv.textContent = v || '•••';
+    });
+
+    // Payment processing
+    paymentForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!pendingReservation) {
+        alert('No pending reservation');
+        paymentModal.classList.remove('active');
+        return;
+      }
+
+      if (cardNumber.value.replace(/\s/g, '').length < 12) {
+        alert('Invalid card number');
+        return;
+      }
+      if (!cardHolder.value.trim()) {
+        alert('Card holder name required');
+        return;
+      }
+
+      processBtn.disabled = true;
+      paymentStatus.style.display = 'block';
+      paymentStatus.className = 'payment-status processing';
+      paymentStatus.textContent = '⏳ Processing payment...';
+
+      setTimeout(() => {
+        paymentStatus.className = 'payment-status success';
+        paymentStatus.textContent = '✓ Payment successful!';
+
+        const data = new URLSearchParams();
+        data.append('hotelId', pendingReservation.hotelId);
+        data.append('roomId', pendingReservation.roomId);
+        data.append('customerName', pendingReservation.customerName);
+        data.append('checkin', pendingReservation.checkin);
+        data.append('checkout', pendingReservation.checkout);
+
+        fetch('/ui/reserve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: data.toString()
+        })
+        .then(resp => {
+          if (resp.redirected) { window.location.href = resp.url; return; }
+          if (!resp.ok) return resp.text().then(t => { throw new Error(t || 'Server error'); });
+          return resp.text();
+        })
+        .catch(err => {
+          alert('Reservation error: ' + (err.message || err));
+          processBtn.disabled = false;
+          paymentStatus.style.display = 'none';
+        });
+      }, 1500);
+    });
+  </script>
+</body>
+</html>
+  <style>
+    :root{--accent:#1976d2;--muted:#666}
+    body{font-family:Inter,Segoe UI,Arial,sans-serif;margin:24px;color:#222}
+    h1{font-size:24px;margin-bottom:12px}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin:12px 0}
+    .card{border:1px solid #e6e6e6;border-radius:10px;padding:14px;box-shadow:0 2px 6px rgba(0,0,0,0.04);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:transform .12s,box-shadow .12s}
+    .card:hover{transform:translateY(-4px);box-shadow:0 6px 18px rgba(0,0,0,0.08)}
+    .card.selected{border-color:var(--accent);box-shadow:0 8px 24px rgba(25,118,210,0.12)}
+    .card h3{margin:0 0 6px;font-size:18px}
+    .card p{margin:0;color:var(--muted);font-size:14px}
+    .card .meta{margin-top:10px;font-weight:600}
+    .form-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;align-items:flex-start}
+    .form-row label{display:block}
+    .vertical-fields{display:flex;flex-direction:column;gap:10px;min-width:260px}
+    input[type=text],input[type=date],select{padding:8px;border:1px solid #ddd;border-radius:6px;width:100%;box-sizing:border-box}
+    button{background:var(--accent);color:white;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+    .muted{color:var(--muted);font-size:13px}
+    .back{margin-left:8px;text-decoration:none;color:var(--accent)}
+    /* 3D card flip styles for payment modal */
+    .card-3d{perspective:1000px}
+    .card-inner{width:360px;height:220px;transition:transform .6s;transform-style:preserve-3d;position:relative}
+    .card-inner.flipped{transform:rotateY(180deg)}
+    .card-face{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;overflow:hidden}
+    .credit-card-front{padding:18px;color:#fff}
+    .credit-card-back{transform:rotateY(180deg);background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%);color:#fff;padding:18px;display:flex;flex-direction:column}
+    .magstripe{height:46px;background:#222;margin-top:8px;border-radius:4px}
+    .signature{background:#fff;color:#000;padding:6px;border-radius:4px;margin-top:18px;display:flex;justify-content:space-between;align-items:center}
+  </style>
+</head>
+<body>
+  <h1>Choisissez un hôtel</h1>
+
+  <div class="cards" id="hotelCards">
+    <div th:each="h : ${hotels}" class="card" th:data-id="${h.id}" onclick="selectHotel(this)">
+      <div>
+        <h3 th:text="${h.name}">Hotel Name</h3>
+        <p th:text="${h.location}">Location</p>
+      </div>
+      <div class="meta">Voir les chambres</div>
+    </div>
+  </div>
+
+  <h1 style="margin-top:18px">Détails de la réservation</h1>
+  <form id="reserveForm" action="/ui/reserve" method="post">
+    <input type="hidden" id="hotelIdInput" name="hotelId" required />
+    <div class="form-row">
+      <label style="min-width:220px">Chambre
+        <select id="roomSelect" name="roomId" required>
+          <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${r.roomNumber + ' — ' + r.capacity + ' pers — ' + r.price + '€'}"></option>
+        </select>
+      </label>
+
+      <div class="vertical-fields">
+        <label>Nom du client
+          <input type="text" name="customerName" required placeholder="Nom complet"/>
+        </label>
+
+        <label>Check-in
+          <input type="date" name="checkin" required />
+        </label>
+
+        <label>Check-out
+          <input type="date" name="checkout" required />
+        </label>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <button type="submit">Réserver</button>
+      <a class="back" href="/">Retour</a>
+    </div>
+  </form>
+
+  <script>
+    const hotelCards = document.getElementById('hotelCards');
+    const roomSelect = document.getElementById('roomSelect');
+    const hotelIdInput = document.getElementById('hotelIdInput');
+
+    // initialize: if there is a rooms list and a first hotel, select it
+    (function init(){
+      const firstCard = hotelCards.querySelector('.card');
+      if(firstCard){ selectCard(firstCard); }
+    })();
+
+    function selectCard(card){
+      // visual
+      hotelCards.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      const hid = card.getAttribute('data-id');
+      hotelIdInput.value = hid;
+      // load rooms for hotel
+      fetch('/ui/rooms?hotelId=' + hid)
+        .then(r=>r.json())
+        .then(list=>{
+          roomSelect.innerHTML = '';
+          if(list.length===0){
+            const opt = document.createElement('option'); opt.textContent='Aucune chambre'; opt.disabled=true; roomSelect.appendChild(opt); return;
+          }
+          for(const r of list){
+            const opt = document.createElement('option');
+            opt.value = r.id;
+            opt.textContent = r.roomNumber + ' — ' + r.capacity + ' pers — ' + r.price + '€' + (r.available? '': ' (indisponible)');
+            if(!r.available) opt.disabled = true;
+            roomSelect.appendChild(opt);
+          }
+        })
+        .catch(err=>{ console.error(err); });
+    }
+
+    window.selectHotel = function(el){ selectCard(el); }
+  </script>
+
+  <!-- Payment modal (hidden) -->
+  <div id="paymentModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;z-index:9999">
+    <div style="Background:#fff;width:920px;max-width:95%;border-radius:12px;display:flex;gap:20px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+      <!-- Card preview (left) -->
+      <div style="flex:1;min-width:320px;display:flex;align-items:center;justify-content:center">
+        <div class="card-3d">
+          <div class="card-inner" id="cardInner">
+            <div class="card-face credit-card-front" style="width:360px;height:220px;border-radius:12px;background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%);">
+              <div style="padding:18px;color:#fff;position:relative;height:100%">
+                <div style="width:46px;height:36px;background:linear-gradient(135deg,#d4af37,#f2d675);border-radius:6px;margin-bottom:12px"></div>
+                <div id="displayCardNumber" style="font-size:20px;letter-spacing:3px;margin-top:10px">•••• •••• •••• ••••</div>
+                <div style="display:flex;justify-content:space-between;margin-top:18px">
+                  <div>
+                    <div style="font-size:10px;opacity:0.8">Card Holder</div>
+                    <div id="displayCardHolder" style="font-weight:600">YOUR NAME</div>
+                  </div>
+                  <div>
+                    <div style="font-size:10px;opacity:0.8">Expires</div>
+                    <div id="displayExpiry" style="font-weight:600">MM/YY</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-face credit-card-back" style="width:360px;height:220px;border-radius:12px;">
+              <div style="color:#fff">
+                <div class="magstripe"></div>
+                <div class="signature">
+                  <div style="font-size:12px;color:#666">Signature</div>
+                  <div id="displayCvv" style="font-weight:700;letter-spacing:3px">•••</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment form (right) -->
+      <div style="width:420px;max-width:50%">
+        <h3 style="margin-top:4px;margin-bottom:10px">Simuler le paiement par carte</h3>
+        <form id="paymentForm">
+          <div style="margin-bottom:10px">
+            <label style="display:block;margin-bottom:6px">Card number</label>
+            <input id="cardNumberModal" type="text" maxlength="19" placeholder="1234 5678 9012 3456" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px" required />
+          </div>
+          <div style="margin-bottom:10px">
+            <label style="display:block;margin-bottom:6px">Card holder</label>
+            <input id="cardHolderModal" type="text" placeholder="JOHN DOE" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px" required />
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <div style="flex:1">
+              <label style="display:block;margin-bottom:6px">Expiry</label>
+              <input id="expiryModal" type="text" maxlength="5" placeholder="MM/YY" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px" required />
+            </div>
+            <div style="width:110px">
+              <label style="display:block;margin-bottom:6px">CVV</label>
+              <input id="cvvModal" type="text" maxlength="4" placeholder="123" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px" required />
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center">
+            <button id="processPaymentBtn" type="submit" style="background:#1976d2;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer">Payer</button>
+            <button id="cancelPaymentBtn" type="button" style="background:#eee;border:none;padding:10px 14px;border-radius:8px;cursor:pointer">Annuler</button>
+            <div id="paymentStatus" style="margin-left:8px;color:#1976d2;font-weight:600"></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // intercept reservation submit and open payment modal
+    const reserveForm = document.getElementById('reserveForm');
+    const paymentModal = document.getElementById('paymentModal');
+    const paymentForm = document.getElementById('paymentForm');
+    const processPaymentBtn = document.getElementById('processPaymentBtn');
+    const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
+    const paymentStatus = document.getElementById('paymentStatus');
+
+    let pendingReservation = null; // will hold form data until payment completes
+
+    reserveForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      // collect reservation data
+      const fd = new FormData(reserveForm);
+      pendingReservation = {};
+      for(const [k,v] of fd.entries()){ pendingReservation[k]=v; }
+      // show modal
+      paymentModal.style.display = 'flex';
+      paymentStatus.textContent = '';
+      // prefill card holder with customer name
+      document.getElementById('cardHolderModal').value = (pendingReservation.customerName || '').toUpperCase();
+      document.getElementById('displayCardHolder').textContent = (pendingReservation.customerName || 'YOUR NAME').toUpperCase();
+    });
+
+    cancelPaymentBtn.addEventListener('click', ()=>{ paymentModal.style.display='none'; });
+
+    // card preview binding
+    const cn = document.getElementById('cardNumberModal');
+    const ch = document.getElementById('cardHolderModal');
+    const ex = document.getElementById('expiryModal');
+    const cv = document.getElementById('cvvModal');
+    const displayCardNumber = document.getElementById('displayCardNumber');
+    const displayCardHolder = document.getElementById('displayCardHolder');
+    const displayExpiry = document.getElementById('displayExpiry');
+    const displayCvv = document.getElementById('displayCvv');
+    const cardInner = document.getElementById('cardInner');
+
+    cn.addEventListener('input', function(e){ let v = e.target.value.replace(/\s/g,''); let fmt = v.match(/.{1,4}/g)?.join(' ')||v; e.target.value = fmt; displayCardNumber.textContent = fmt || '•••• •••• •••• ••••'; });
+    ch.addEventListener('input', function(e){ displayCardHolder.textContent = e.target.value.toUpperCase() || 'YOUR NAME'; });
+    ex.addEventListener('input', function(e){ let v = e.target.value.replace(/\D/g,''); if(v.length>=2) v = v.slice(0,2) + '/' + v.slice(2,4); e.target.value = v; displayExpiry.textContent = v || 'MM/YY'; });
+
+    // flip card on CVV focus and show CVV on the back
+    cv.addEventListener('focus', function(){ cardInner.classList.add('flipped'); });
+    cv.addEventListener('blur', function(){ cardInner.classList.remove('flipped'); });
+    cv.addEventListener('input', function(e){ let v = e.target.value.replace(/\D/g,''); displayCvv.textContent = v || '•••'; });
+
+    paymentForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      if(!pendingReservation){ alert('Aucune réservation en attente'); paymentModal.style.display='none'; return; }
+      // simple client-side validation for card fields
+      if(cn.value.replace(/\s/g,'').length < 12){ alert('Numéro de carte invalide'); return; }
+      if(!ch.value.trim()){ alert('Nom de titulaire requis'); return; }
+
+      processPaymentBtn.disabled = true; paymentStatus.textContent = 'Traitement...';
+      // simulate payment delay
+      setTimeout(()=>{
+        paymentStatus.textContent = 'Paiement simulé: réussi';
+        // submit reservation to server
+        const data = new URLSearchParams();
+        data.append('hotelId', pendingReservation.hotelId);
+        data.append('roomId', pendingReservation.roomId);
+        data.append('customerName', pendingReservation.customerName);
+        data.append('checkin', pendingReservation.checkin);
+        data.append('checkout', pendingReservation.checkout);
+
+        fetch('/ui/reserve', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: data.toString() })
+          .then(resp => {
+            if(resp.redirected){ window.location.href = resp.url; return; }
+            if(!resp.ok) return resp.text().then(t=>{ throw new Error(t||'Erreur serveur'); });
+            return resp.text();
+          })
+          .catch(err=>{
+            alert('Erreur lors de la réservation: ' + (err.message || err));
+            processPaymentBtn.disabled = false; paymentStatus.textContent = '';
+          });
+
+      }, 1200);
+    });
+  </script>
+</body>
+</html>
